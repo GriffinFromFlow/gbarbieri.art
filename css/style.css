@@ -67,9 +67,9 @@ main { padding: 2rem 1.5rem; }
 .about-right { grid-column: 3; }
 
 .about-text {
-  font-family: Verdana, Geneva, sans-serif;
-  font-style: italic;
-  font-size: 0.95rem;
+  font-family: Inconsolata, monospace;
+  font-size: 1.15rem;
+  text-transform: none;
   line-height: 1.7;
   text-shadow: 2px 3px 4px rgba(0, 0, 0, 0.9);
 }
