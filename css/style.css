@@ -262,8 +262,8 @@ main { flex: 1; padding: 2rem 1.5rem; }
   padding: 4px 2px;
   background: none;
   color: var(--green);
-  font-family: Verdana, Geneva, sans-serif;
-  font-size: 1.05rem;
+  font-family: Inconsolata, monospace;
+  font-size: 1.25rem;
   letter-spacing: 0.04em;
   text-align: left;
   white-space: nowrap;
