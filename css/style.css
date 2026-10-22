@@ -6,37 +6,10 @@
 
 * { box-sizing: border-box; }
 
-html, body { height: 100%; margin: 0; }
-
-body {
-  background: #0d151c;
+html, body {
+  background: #05070f url("../images/planet_in_space.webp") center / cover no-repeat fixed;
   color: var(--text);
   font-family: Verdana, Geneva, sans-serif;
-}
-
-/* Blurred fill behind the zoomed-out image so no hard edges show */
-body::before,
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: url("../images/planet_in_space.webp") center / cover no-repeat;
-  pointer-events: none;
-}
-
-body::before {
-  filter: blur(40px) brightness(0.8);
-  transform: scale(1.15);
-}
-
-body::after {
-  transform: scale(0.85);
-  --fade: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-  -webkit-mask-image: var(--fade), linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image: var(--fade), linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent);
-  mask-composite: intersect;
 }
 
 .site-header {
@@ -59,9 +32,8 @@ body::after {
 }
 
 .site-header a {
-  font-family: "Verdana Pro Light", "Verdana Pro", Verdana, Geneva, sans-serif;
+  font-family: Verdana, Geneva, sans-serif;
   font-style: italic;
-  font-weight: 300;
   font-size: 0.9rem;
   color: rgba(242, 244, 255, 0.8);
   text-decoration: none;
