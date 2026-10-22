@@ -29,7 +29,21 @@
     </section>
   </main>
   <main id="research" data-title="Research" hidden></main>
+  <aside class="log-device" id="log-device" aria-label="Audio log">
+    <div class="log-led" aria-hidden="true"></div>
+    <div class="log-screen">
+      <div class="log-row">
+        <button class="log-play" type="button" aria-label="Play log entry"></button>
+        <button class="log-title" type="button">Log Entry: April 5th, 1963</button>
+        <div class="log-blocks" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+      <div class="log-progress" aria-hidden="true"><span></span></div>
+      <div class="log-decor" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    </div>
+    <audio id="log-audio" src="audio/april-5-1963.mp3" preload="none"></audio>
+  </aside>
   <script src="js/router.js" defer></script>
   <script src="js/parallax.js" defer></script>
+  <script src="js/log-device.js" defer></script>
 </body>
 </html>
