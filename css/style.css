@@ -34,8 +34,9 @@ body {
 }
 
 .site-header a {
-  font-family: Verdana, Geneva, sans-serif;
-  font-size: 0.9rem;
+  font-family: Inconsolata, monospace;
+  font-weight: 700;
+  font-size: 1.05rem;
   color: rgba(242, 244, 255, 0.8);
   text-decoration: none;
   letter-spacing: 0.03em;
