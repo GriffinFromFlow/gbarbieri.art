@@ -1,41 +1,58 @@
 // Parallax for the space + planet background layers (body::before / body::after).
-// The space layer travels further than the planet layer; both are clamped to
-// the overscan margin in style.css so no edges are ever exposed.
+// The space layer travels further than the planet layer. Each layer's overscan
+// margin (set in style.css) is split between cursor movement (40%) and scroll
+// movement (the rest), so neither can expose an edge or crowd out the other.
 (function () {
   var root = document.documentElement;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  var SPACE = { pointer: 50, scroll: 0.2, margin: 0.06 };
-  var PLANET = { pointer: 25, scroll: 0.1, margin: 0.03 };
+  // pointer: max px of cursor shift; scroll: px of shift per px scrolled;
+  // margin: overscan as a fraction of the viewport (matches inset in style.css).
+  var SPACE = { pointer: 50, scroll: 0.5, margin: 0.06 };
+  var PLANET = { pointer: 25, scroll: 0.25, margin: 0.03 };
+  var POINTER_SHARE = 0.4;
 
-  var nx = 0, ny = 0;          // pointer position, -1..1 from window center
-  var virtualScroll = 0;       // stands in for scrollY when the page can't scroll
+  var nx = 0, ny = 0;                 // pointer position, -1..1 from window center
+  var virtual = { x: 0, y: 0 };       // stands in for scroll when the page can't scroll
   var cur = { sx: 0, sy: 0, px: 0, py: 0 };
 
   function clamp(v, max) { return Math.max(-max, Math.min(max, v)); }
 
-  function canScroll() {
+  function pointerMax(layer, dim) {
+    return Math.min(layer.pointer, dim * layer.margin * POINTER_SHARE);
+  }
+
+  function scrollMax(layer, dim) {
+    return dim * layer.margin - pointerMax(layer, dim);
+  }
+
+  function canScrollY() {
     return document.documentElement.scrollHeight > window.innerHeight + 1;
   }
 
-  // Real scroll position if the page scrolls, otherwise the wheel/swipe total.
-  function scrollPos() {
-    return canScroll() ? window.scrollY : virtualScroll;
+  function canScrollX() {
+    return document.documentElement.scrollWidth > window.innerWidth + 1;
   }
 
-  // Virtual range ends exactly where the space layer hits its overscan margin.
-  function addVirtual(dy) {
-    if (canScroll()) return;
-    var max = window.innerHeight * SPACE.margin / SPACE.scroll;
-    virtualScroll = Math.max(0, Math.min(max, virtualScroll + dy));
+  // Virtual range ends exactly where the space layer uses up its scroll share.
+  function addVirtual(dx, dy) {
+    if (!canScrollX()) {
+      var mx = scrollMax(SPACE, window.innerWidth) / SPACE.scroll;
+      virtual.x = clamp(virtual.x + dx, mx);
+    }
+    if (!canScrollY()) {
+      var my = scrollMax(SPACE, window.innerHeight) / SPACE.scroll;
+      virtual.y = clamp(virtual.y + dy, my);
+    }
   }
 
   function target(layer) {
-    var x = -nx * layer.pointer;
-    var y = -ny * layer.pointer - scrollPos() * layer.scroll;
+    var w = window.innerWidth, h = window.innerHeight;
+    var sx = canScrollX() ? window.scrollX : virtual.x;
+    var sy = canScrollY() ? window.scrollY : virtual.y;
     return {
-      x: clamp(x, window.innerWidth * layer.margin),
-      y: clamp(y, window.innerHeight * layer.margin)
+      x: -nx * pointerMax(layer, w) + clamp(-sx * layer.scroll, scrollMax(layer, w)),
+      y: -ny * pointerMax(layer, h) + clamp(-sy * layer.scroll, scrollMax(layer, h))
     };
   }
 
@@ -58,17 +75,18 @@
   }, { passive: true });
 
   window.addEventListener('wheel', function (e) {
-    addVirtual(e.deltaY * (e.deltaMode === 1 ? 16 : 1) * 0.5);
+    var unit = e.deltaMode === 1 ? 16 : 1;
+    addVirtual(e.deltaX * unit, e.deltaY * unit);
   }, { passive: true });
 
-  var touchY = null;
+  var touch = null;
   window.addEventListener('touchstart', function (e) {
-    touchY = e.touches[0].clientY;
+    touch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
   }, { passive: true });
   window.addEventListener('touchmove', function (e) {
-    var y = e.touches[0].clientY;
-    if (touchY !== null) addVirtual(touchY - y);
-    touchY = y;
+    var t = e.touches[0];
+    if (touch) addVirtual(touch.x - t.clientX, touch.y - t.clientY);
+    touch = { x: t.clientX, y: t.clientY };
   }, { passive: true });
 
   requestAnimationFrame(frame);
