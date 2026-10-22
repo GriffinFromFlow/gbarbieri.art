@@ -12,13 +12,13 @@
 <body>
   <header class="site-header">
     <nav>
-      <a href="index.html" aria-current="page">About Me</a>
-      <a href="research.html">Research</a>
+      <a href="#about" aria-current="page">About Me</a>
+      <a href="#research">Research</a>
       <a href="https://gbarbieri.bandcamp.com">Music</a>
       <a href="https://flowrecording.studio">Production</a>
     </nav>
   </header>
-  <main class="about">
+  <main class="about" id="about" data-title="About Me">
     <section class="about-text about-left">
       <p>Griffin Barbieri is a researcher and music producer attending the Georgia Institute of Technology.<br><br>His work focuses on machine learning implementations in commercial mixing workflows, including identifying AI-generated music, extracting audio effect parameters from mixes, and building VST plugins incorporating state-of-the-art models.</p>
     </section>
@@ -27,6 +27,8 @@
       <p>He brings his creative mixing and composition skill to Flow Studio, a multimedia production studio in Nashville of which he is co-founder.</p>
     </section>
   </main>
+  <main id="research" data-title="Research" hidden></main>
+  <script src="js/router.js" defer></script>
   <script src="js/parallax.js" defer></script>
 </body>
 </html>
