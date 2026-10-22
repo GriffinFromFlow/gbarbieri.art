@@ -11,6 +11,9 @@
 html, body { height: 100%; margin: 0; }
 
 body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
   background: #05070f;
   color: var(--text);
   font-family: Verdana, Geneva, sans-serif;
@@ -40,7 +43,8 @@ body::after {
   inset: -3%;
   z-index: -1;
   background-image: url("../images/planet.webp");
-  transform: translate3d(var(--planet-x, 0px), var(--planet-y, 0px), 0) scale(0.8649);
+  /* Shift down by half the header so the planet centers in the space below it */
+  transform: translate3d(var(--planet-x, 0px), calc(var(--planet-y, 0px) + var(--header-h, 6.5rem) / 2), 0) scale(0.8649);
 }
 
 .site-header {
@@ -67,6 +71,11 @@ body::after {
   text-decoration: none;
 }
 
+.site-header .site-name:hover,
+.site-header .site-name:focus-visible {
+  color: #fff;
+}
+
 .site-header nav {
   display: flex;
   flex-wrap: wrap;
@@ -91,7 +100,7 @@ body::after {
   color: var(--accent);
 }
 
-main { padding: 2rem 1.5rem; }
+main { flex: 1; padding: 2rem 1.5rem; }
 
 /* About page: text flanking the planet. The planet is ~37% of the viewport cover width
    width and the background is "cover", so size the gap from the same math. */
@@ -100,7 +109,6 @@ main { padding: 2rem 1.5rem; }
   grid-template-columns: 1fr calc(0.344 * max(100vw, 177.78vh)) 1fr;
   align-items: center;
   gap: 0 1rem;
-  min-height: calc(100vh - 7rem);
   padding-inline: 4vw;
 }
 
