@@ -59,7 +59,7 @@ body::after {
 }
 
 .site-header a {
-  font-family: Verdana, Geneva, sans-serif;
+  font-family: "Verdana Pro Light", "Verdana Pro", Verdana, Geneva, sans-serif;
   font-style: italic;
   font-weight: 300;
   font-size: 0.9rem;
