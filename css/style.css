@@ -310,9 +310,10 @@ main { flex: 1; padding: 2rem 1.5rem; }
 }
 
 .papers {
-  --w: min(420px, 24vw, 38vh);
-  /* Gap between fanned cards: leaves 2.5rem clear even when a neighbor zooms to 1.3x (0.15w per side) */
-  --gap: calc(var(--w) * 0.15 + 2.5rem);
+  --w: min(420px, 23vw, 38vh);
+  --zoom: 1.4;                   /* hover scale */
+  /* Gap between fanned cards: leaves 2.5rem clear even when a neighbor zooms (it grows (zoom-1)/2 * w per side) */
+  --gap: calc(var(--w) * (var(--zoom) - 1) / 2 + 2.5rem);
   position: relative;
   width: 100%;
   height: calc(var(--w) * 1.45 + 3rem);
@@ -360,9 +361,9 @@ main { flex: 1; padding: 2rem 1.5rem; }
 .papers.fanned .paper:focus-within,
 .papers.fanned .paper:hover {
   z-index: 5;
-  /* Scaling by 1.3 adds 0.15 of the card height above it; shifting down by about
-     that much (0.2 of the width) keeps the top edge clear of the header. */
-  transform: translate(calc(-50% + var(--spread, 0px)), calc(-50% + var(--w) * 0.2)) rotate(0deg) scale(1.3);
+  /* Zooming grows the card upward too; a small downward shift (0.17 of its width)
+     offsets most of that so it stays clear of the header. */
+  transform: translate(calc(-50% + var(--spread, 0px)), calc(-50% + var(--w) * 0.17)) rotate(0deg) scale(var(--zoom));
 }
 
 .papers.fanned .paper:focus-within { z-index: 4; }
