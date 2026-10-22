@@ -38,7 +38,7 @@ body::after {
   inset: -3%;
   z-index: -1;
   background-image: url("../images/planet.webp");
-  transform: translate3d(var(--planet-x, 0px), var(--planet-y, 0px), 0) scale(0.93);
+  transform: translate3d(var(--planet-x, 0px), var(--planet-y, 0px), 0) scale(0.8649);
 }
 
 .site-header {
@@ -83,7 +83,7 @@ main { padding: 2rem 1.5rem; }
    width and the background is "cover", so size the gap from the same math. */
 .about {
   display: grid;
-  grid-template-columns: 1fr calc(0.37 * max(100vw, 177.78vh)) 1fr;
+  grid-template-columns: 1fr calc(0.344 * max(100vw, 177.78vh)) 1fr;
   align-items: center;
   gap: 0 1rem;
   min-height: calc(100vh - 4rem);
