@@ -138,7 +138,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
 /* ---- Retro-futurist log device (bottom of the page) ----
    Only its top bezel shows at rest; hover/focus/tap raises the top half. */
 .log-device {
-  --h: 220px;            /* device height */
+  --h: 210px;            /* device height */
   --rest: 14px;          /* bezel visible at rest */
   --raise: 0.5;          /* fraction of the device visible when raised */
   --beige: #e6dcc3;
@@ -147,9 +147,9 @@ main { flex: 1; padding: 2rem 1.5rem; }
   left: 50%;
   bottom: 0;
   z-index: 20;
-  width: min(720px, calc(100vw - 2rem));
+  width: min(540px, calc(100vw - 2rem));
   height: var(--h);
-  padding: 14px 18px 18px;
+  padding: 26px 28px 28px;   /* thick metal edge around the screen */
   border-radius: 24px;
   background:
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 3px),
@@ -185,8 +185,8 @@ main { flex: 1; padding: 2rem 1.5rem; }
 /* Status light on the bezel: lights up while audio plays */
 .log-led {
   position: absolute;
-  top: 4px;
-  right: 24px;
+  top: 9px;
+  right: 34px;
   width: 22px;
   height: 4px;
   border-radius: 2px;
@@ -202,7 +202,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
 /* The recessed screen: all beige */
 .log-screen {
   position: relative;
-  height: calc(100% - 14px);
+  height: 100%;
   padding: 14px 18px;
   border-radius: 14px;
   background: var(--beige);
@@ -227,12 +227,9 @@ main { flex: 1; padding: 2rem 1.5rem; }
 .log-play {
   flex: none;
   position: relative;
-  width: 48px;
+  width: 40px;
   height: 36px;
-  border-radius: 8px;
-  background: var(--ink);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  transition: background 0.2s;
+  background: none;
 }
 
 .log-play::before {            /* play triangle */
@@ -241,16 +238,16 @@ main { flex: 1; padding: 2rem 1.5rem; }
   top: 50%;
   left: 50%;
   border-style: solid;
-  border-width: 8px 0 8px 13px;
-  border-color: transparent transparent transparent var(--beige);
-  transform: translate(-35%, -50%);
+  border-width: 11px 0 11px 18px;
+  border-color: transparent transparent transparent #000;
+  transform: translate(-40%, -50%);
 }
 
 .log-device.playing .log-play::before {   /* pause bars */
-  width: 12px;
-  height: 16px;
+  width: 16px;
+  height: 22px;
   border: 0;
-  background: linear-gradient(90deg, var(--beige) 0 4px, transparent 4px 8px, var(--beige) 8px 12px);
+  background: linear-gradient(90deg, #000 0 5px, transparent 5px 11px, #000 11px 16px);
   transform: translate(-50%, -50%);
 }
 
@@ -270,7 +267,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
 }
 
 .log-play:hover,
-.log-play:focus-visible { background: #46433a; }
+.log-play:focus-visible { opacity: 0.7; }
 .log-title:hover,
 .log-title:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
 .log-device button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
