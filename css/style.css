@@ -361,9 +361,9 @@ main { flex: 1; padding: 2rem 1.5rem; }
 .papers.fanned .paper:focus-within,
 .papers.fanned .paper:hover {
   z-index: 5;
-  /* Zooming grows the card upward too; a small downward shift (0.12 of its width)
+  /* Zooming grows the card upward too; a small downward shift (0.07 of its width)
      offsets most of that so it stays clear of the header. */
-  transform: translate(calc(-50% + var(--spread, 0px)), calc(-50% + var(--w) * 0.12)) rotate(0deg) scale(var(--zoom));
+  transform: translate(calc(-50% + var(--spread, 0px)), calc(-50% + var(--w) * 0.07)) rotate(0deg) scale(var(--zoom));
 }
 
 .papers.fanned .paper:focus-within { z-index: 4; }
