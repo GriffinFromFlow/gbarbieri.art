@@ -273,6 +273,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
 
 .log-progress {
   width: 60%;
+  margin-left: 56px;   /* play button 40 + gap 14 + title padding 2: lines up with the title's first letter */
   height: 6px;
   margin-top: 16px;
   border-radius: 3px;
