@@ -37,6 +37,20 @@
     if (e.pointerType === 'mouse' && !holdsFocus()) fan(false);
   });
 
+  // While fanned the stage is a full-width band, so leaving sideways never fires
+  // pointerleave. Close the fan once the mouse is a little past the outermost cards.
+  var SIDE_MARGIN = 32;
+  stage.addEventListener('pointermove', function (e) {
+    if (e.pointerType !== 'mouse' || !stage.classList.contains('fanned') || holdsFocus()) return;
+    var left = Infinity, right = -Infinity;
+    cards.forEach(function (card) {
+      var box = card.getBoundingClientRect();
+      left = Math.min(left, box.left);
+      right = Math.max(right, box.right);
+    });
+    if (e.clientX < left - SIDE_MARGIN || e.clientX > right + SIDE_MARGIN) fan(false);
+  });
+
   stage.addEventListener('focusin', function () { fan(true); });
 
   // Clicking away (or tapping away on touch) closes the fan.
