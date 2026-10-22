@@ -13,7 +13,7 @@
       if (!src || body.querySelector('iframe')) return;
       var frame = document.createElement('iframe');
       frame.src = src + '#toolbar=0&navpanes=0&view=FitH';
-      frame.title = card.querySelector('.paper-title').textContent;
+      frame.title = card.getAttribute('aria-label');
       body.textContent = '';
       body.appendChild(frame);
     });
