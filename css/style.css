@@ -35,8 +35,9 @@ body {
 
 .site-header a {
   font-family: Inconsolata, monospace;
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 1rem;
   color: rgba(242, 244, 255, 0.8);
   text-decoration: none;
   letter-spacing: 0.03em;
