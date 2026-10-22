@@ -141,7 +141,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
   --h: 210px;            /* device height */
   --rest: 14px;          /* bezel visible at rest */
   --raise: 0.5;          /* fraction of the device visible when raised */
-  --beige: #e6dcc3;
+  --green: #00ff41;
   position: fixed;
   left: 50%;
   bottom: 0;
@@ -194,8 +194,8 @@ main { flex: 1; padding: 2rem 1.5rem; }
 }
 
 .log-device.playing .log-led {
-  background: var(--beige);
-  box-shadow: 0 0 6px var(--beige);
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
 }
 
 /* The recessed screen: all beige */
@@ -238,7 +238,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
   left: 50%;
   border-style: solid;
   border-width: 11px 0 11px 18px;
-  border-color: transparent transparent transparent var(--beige);
+  border-color: transparent transparent transparent var(--green);
   transform: translate(-40%, -50%);
 }
 
@@ -246,7 +246,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
   width: 16px;
   height: 22px;
   border: 0;
-  background: linear-gradient(90deg, var(--beige) 0 5px, transparent 5px 11px, var(--beige) 11px 16px);
+  background: linear-gradient(90deg, var(--green) 0 5px, transparent 5px 11px, var(--green) 11px 16px);
   transform: translate(-50%, -50%);
 }
 
@@ -255,7 +255,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
   min-width: 0;
   padding: 4px 2px;
   background: none;
-  color: var(--beige);
+  color: var(--green);
   font-family: Inconsolata, monospace;
   font-size: 1.25rem;
   letter-spacing: 0.04em;
@@ -269,7 +269,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
 .log-play:focus-visible { opacity: 0.7; }
 .log-title:hover,
 .log-title:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
-.log-device button:focus-visible { outline: 2px solid var(--beige); outline-offset: 2px; }
+.log-device button:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
   .log-device { transition: none; }
