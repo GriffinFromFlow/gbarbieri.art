@@ -310,7 +310,9 @@ main { flex: 1; padding: 2rem 1.5rem; }
 }
 
 .papers {
-  --w: min(420px, 28vw, 38vh);
+  --w: min(420px, 24vw, 38vh);
+  /* Gap between fanned cards: leaves 2.5rem clear even when a neighbor zooms to 1.3x (0.15w per side) */
+  --gap: calc(var(--w) * 0.15 + 2.5rem);
   position: relative;
   width: 100%;
   height: calc(var(--w) * 1.45 + 3rem);
@@ -345,14 +347,14 @@ main { flex: 1; padding: 2rem 1.5rem; }
   transition: transform 0.6s cubic-bezier(0.22, 0.8, 0.3, 1), transform-origin 0.6s cubic-bezier(0.22, 0.8, 0.3, 1);
 }
 
-/* Hover: the fan opens out flat; side cards sit one card width plus a 2rem gap either side of center, upright */
+/* Hover: the fan opens out flat; side cards sit one card width plus --gap either side of center, upright */
 .papers.fanned .paper {
   transform-origin: 50% 50%;       /* grow from the card's own center, not the fan pivot */
   transform: translate(calc(-50% + var(--spread, 0px)), -50%) rotate(0deg);
 }
-.papers.fanned .paper:nth-child(1) { --spread: calc(-1 * (var(--w) + 2rem)); }
+.papers.fanned .paper:nth-child(1) { --spread: calc(-1 * (var(--w) + var(--gap))); }
 .papers.fanned .paper:nth-child(2) { --spread: 0px; }
-.papers.fanned .paper:nth-child(3) { --spread: calc(var(--w) + 2rem); }
+.papers.fanned .paper:nth-child(3) { --spread: calc(var(--w) + var(--gap)); }
 
 /* Zoom the card under the pointer (or holding focus) so its PDF is easier to read. */
 .papers.fanned .paper:focus-within,
