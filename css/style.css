@@ -113,7 +113,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
 }
 
 .about-text {
-  max-width: 46rem;
+  max-width: 36rem;
   font-family: Inconsolata, monospace;
   font-size: 1.05rem;
   text-transform: none;
