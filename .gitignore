@@ -1,1 +1,4 @@
 *:Zone.Identifier
+images/*
+!images/planet.webp
+!images/space.webp

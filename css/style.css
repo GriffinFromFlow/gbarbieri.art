@@ -181,12 +181,18 @@ main { flex: 1; padding: 2rem 1.5rem; }
   .log-device:hover { transform: translate(-50%, calc(100% - var(--h) * var(--raise))); }
 }
 
-/* Status light on the bezel: lights up while audio plays */
-.log-led {
+/* Four slots on the bezel; the top one is a status light that lights up while audio plays */
+.log-slots {
   position: absolute;
-  top: 11px;
+  top: 8px;
   right: 44px;
+  display: grid;
+  gap: 3px;
   width: 22px;
+}
+
+.log-slots i {
+  display: block;
   height: 4px;
   border-radius: 2px;
   background: #5d6065;
