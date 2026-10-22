@@ -68,9 +68,9 @@ main { padding: 2rem 1.5rem; }
 
 .about-text {
   font-family: Inconsolata, monospace;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   text-transform: none;
-  line-height: 1.7;
+  line-height: 1.4;
   text-shadow: 2px 3px 4px rgba(0, 0, 0, 0.9);
 }
 
