@@ -198,7 +198,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
   box-shadow: 0 0 6px var(--green);
 }
 
-/* The recessed screen: all beige */
+/* The recessed screen: black glass */
 .log-screen {
   position: relative;
   height: 100%;
