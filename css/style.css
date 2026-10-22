@@ -181,14 +181,14 @@ main { flex: 1; padding: 2rem 1.5rem; }
   .log-device:hover { transform: translate(-50%, calc(100% - var(--h) * var(--raise))); }
 }
 
-/* Four slots on the bezel; the top one is a status light that lights up while audio plays */
+/* Three slots on the bezel; the top one is a status light that lights up while audio plays */
 .log-slots {
   position: absolute;
   top: 8px;
   right: 44px;
   display: grid;
   gap: 3px;
-  width: 22px;
+  width: 44px;   /* grows leftward from the fixed right edge */
 }
 
 .log-slots i {
