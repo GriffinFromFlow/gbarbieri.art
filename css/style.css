@@ -102,20 +102,19 @@ body::after {
 
 main { flex: 1; padding: 2rem 1.5rem; }
 
-/* About page: text flanking the planet. The planet is ~37% of the viewport cover width
-   width and the background is "cover", so size the gap from the same math. */
+/* About page: the two text blocks sit centered, one above the other */
 .about {
-  display: grid;
-  grid-template-columns: 1fr calc(0.344 * max(100vw, 177.78vh)) 1fr;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0 1rem;
+  justify-content: center;
+  gap: 1.75rem;
   padding-inline: 4vw;
 }
 
-.about-left { grid-column: 1; }
-.about-right { grid-column: 3; }
-
 .about-text {
+  max-width: 46rem;
+  text-align: center;
   font-family: Inconsolata, monospace;
   font-size: 1.05rem;
   text-transform: none;
@@ -125,15 +124,6 @@ main { flex: 1; padding: 2rem 1.5rem; }
 
 .about-text p { margin: 0 0 1em; }
 .about-text p:last-child { margin-bottom: 0; }
-
-@media (max-width: 900px) {
-  .about {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    min-height: 0;
-  }
-  .about-left, .about-right { grid-column: 1; }
-}
 
 /* ---- Retro-futurist log device (bottom of the page) ----
    Only its top bezel shows at rest; hover/focus/tap raises the top half. */
