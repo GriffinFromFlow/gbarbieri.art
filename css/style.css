@@ -8,10 +8,11 @@
 
 [hidden] { display: none !important; }
 
-html, body { height: 100%; margin: 0; }
+html { height: 100%; }
 
 body {
-  min-height: 100%;
+  margin: 0;
+  min-height: 100%;       /* grows with its content, so short screens scroll to the bottom */
   display: flex;
   flex-direction: column;
   background: #05070f;
@@ -20,28 +21,34 @@ body {
 }
 
 /* Parallax layers: both are centered, "cover"-sized, and oversized so
-   js/parallax.js can shift them without exposing an edge. */
-body::before,
-body::after {
-  content: "";
+   js/parallax.js can shift them without exposing an edge. They live in a fixed,
+   clipped box (.bg) so the overscan can't make the page scroll sideways on phones. */
+.bg {
   position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg::before,
+.bg::after {
+  content: "";
+  position: absolute;
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  pointer-events: none;
   will-change: transform;
 }
 
-body::before {
+.bg::before {
   inset: -6%;
-  z-index: -2;
   background-image: url("../images/space.webp");
   transform: translate3d(var(--space-x, 0px), var(--space-y, 0px), 0);
 }
 
-body::after {
+.bg::after {
   inset: -3%;
-  z-index: -1;
   background-image: url("../images/planet.webp");
   /* Shift down by half the header so the planet centers in the space below it */
   transform: translate3d(var(--planet-x, 0px), calc(var(--planet-y, 0px) + var(--header-h, 6.5rem) / 2), 0) scale(0.8649);
@@ -137,11 +144,18 @@ main { flex: 1; padding: 2rem 1.5rem; }
   /* Room below the text so the last lines clear the log device's bezel and the browser's bottom bar */
   .about { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
 
+  /* One extra blank line after every block of text, including the break inside the first block */
+  .about { gap: calc(1.5rem + 1.47rem); }
+  .about-text p { margin-bottom: calc(1em + 1.4em); }
+  .about-text p:last-child { margin-bottom: 0; }
+  .about-text br + br { display: block; content: ""; margin-top: 1.4em; }
+
   /* 10% heavier shadow on the text */
   .about-text { text-shadow: 2.2px 3.3px 4.4px rgba(0, 0, 0, 0.99); }
 
   /* Planet 10% smaller than desktop (0.8649 * 0.9) */
-  body::after {
+  .bg::after {
+    inset: -3% -50%;   /* wide box: the planet is cropped by the box, so shrinking must not expose its edges */
     transform: translate3d(var(--planet-x, 0px), calc(var(--planet-y, 0px) + var(--header-h, 6.5rem) / 2), 0) scale(0.7784);
   }
 }

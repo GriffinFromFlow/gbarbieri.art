@@ -1,5 +1,5 @@
 // Log device: play/pause the audio snippet from the play button or the title,
-// show playback progress, and raise the device on tap for touch screens (hover and
+// show playback progress, and raise/lower the device on tap for touch screens (hover and
 // keyboard focus are handled in CSS). The <audio> element sits outside the
 // router's views, so playback continues when navigating between them.
 (function () {
@@ -30,9 +30,16 @@
     if (audio.duration) device.style.setProperty('--progress', audio.currentTime / audio.duration);
   });
 
-  // Touch: tap the device to raise it, tap elsewhere to lower it.
+  // Touch: tap the device to raise it; tap it again (on the metal or screen, not the play
+  // controls) or tap anywhere else to lower it.
+  var wasOpen = false;
+  device.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'touch') wasOpen = device.classList.contains('open');
+  });
   device.addEventListener('pointerup', function (e) {
-    if (e.pointerType === 'touch') device.classList.add('open');
+    if (e.pointerType !== 'touch') return;
+    if (wasOpen && !e.target.closest('button')) device.classList.remove('open');
+    else device.classList.add('open');
   });
   document.addEventListener('pointerdown', function (e) {
     if (!device.contains(e.target)) device.classList.remove('open');
