@@ -43,7 +43,12 @@
   function fan(on) {
     if (stacked.matches) on = false;
     stage.classList.toggle('fanned', on);
-    if (!on) bounds = null;
+    if (!on) { bounds = null; zoomCard(null); }
+  }
+
+  // Touch: one card at a time can be zoomed (see the click handler).
+  function zoomCard(card) {
+    cards.forEach(function (c) { c.classList.toggle('zoomed', c === card); });
   }
 
   // Only keyboard focus keeps the fan open. A mouse click also focuses a card, but that
@@ -66,12 +71,17 @@
       downFanned = stage.classList.contains('fanned') || stacked.matches;
     });
     card.addEventListener('click', function (e) {
-      if (downType !== 'mouse' && !downFanned) return;
       // A click on the scrollbar track/thumb is for scrolling, not opening.
       var pages = card.querySelector('.paper-pages');
       if (pages && e.target === pages) {
         var box = pages.getBoundingClientRect();
         if (e.clientX > box.left + pages.clientWidth) return;
+      }
+      // Touch on a tablet: the first tap only fans the stack out, the next tap zooms the
+      // card, and a tap on the zoomed card opens it. (Phones are a plain column: tap opens.)
+      if (downType !== 'mouse' && !stacked.matches) {
+        if (!downFanned) return;
+        if (!card.classList.contains('zoomed')) { zoomCard(card); return; }
       }
       openPdf(card);
     });
@@ -131,8 +141,10 @@
   // Crossing the breakpoint (rotating a tablet, resizing) resets any open fan.
   stacked.addEventListener('change', function () { fan(false); });
 
-  // Clicking away (or tapping away on touch) closes the fan.
+  // Clicking away (or tapping away on touch) closes the fan; tapping the empty band
+  // around the cards just puts the zoomed card back.
   document.addEventListener('pointerdown', function (e) {
     if (!stage.contains(e.target)) fan(false);
+    else if (!e.target.closest('.paper')) zoomCard(null);
   });
 })();

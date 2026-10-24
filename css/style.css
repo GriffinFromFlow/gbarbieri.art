@@ -378,21 +378,31 @@ main { flex: 1; padding: 2rem 1.5rem; }
 /* Hover: the fan opens out flat; side cards sit one card width plus --gap either side of center, upright */
 .papers.fanned .paper {
   transform: translate(calc(-50% + var(--spread, 0px)), -50%) rotate(0deg);
+  /* The zoomed pose. Zooming grows the card upward too; a small downward shift (0.07 of its width)
+     offsets most of that so it stays clear of the header. The origin stays at the fan pivot
+     (80% of the card height, 1.12 widths, below center), so the shift also cancels the extra
+     upward drift of scaling about that point: (zoom - 1) * 1.12 * width. */
+  --zoomed: translate(calc(-50% + var(--spread, 0px)), calc(-50% + var(--w) * (0.07 + (var(--zoom) - 1) * 1.12))) rotate(0deg) scale(var(--zoom));
 }
 .papers.fanned .paper:nth-child(1) { --spread: calc(-1 * (var(--w) + var(--gap))); }
 .papers.fanned .paper:nth-child(2) { --spread: 0px; }
 .papers.fanned .paper:nth-child(3) { --spread: calc(var(--w) + var(--gap)); }
 
-/* Zoom the card under the pointer (or holding keyboard focus; a click's focus must not stick) so its PDF is easier to read. */
+/* Zoom the card under a mouse pointer, the one holding keyboard focus (a click's focus must not
+   stick), or, on touch, the one tapped once (.zoomed, set by js/papers.js; a second tap opens
+   it). :hover only counts for real hover devices, since it sticks after a tap on touch screens. */
 .papers.fanned .paper:focus-visible,
 .papers.fanned .paper:has(:focus-visible),
-.papers.fanned .paper:hover {
+.papers.fanned .paper.zoomed {
   z-index: 5;
-  /* Zooming grows the card upward too; a small downward shift (0.07 of its width)
-     offsets most of that so it stays clear of the header. The origin stays at the fan pivot
-     (80% of the card height, 1.12 widths, below center), so the shift also cancels the extra
-     upward drift of scaling about that point: (zoom - 1) * 1.12 * width. */
-  transform: translate(calc(-50% + var(--spread, 0px)), calc(-50% + var(--w) * (0.07 + (var(--zoom) - 1) * 1.12))) rotate(0deg) scale(var(--zoom));
+  transform: var(--zoomed);
+}
+
+@media (hover: hover) {
+  .papers.fanned .paper:hover {
+    z-index: 5;
+    transform: var(--zoomed);
+  }
 }
 
 .papers.fanned .paper:focus-visible,
