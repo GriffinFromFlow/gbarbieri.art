@@ -8,10 +8,11 @@
 
 [hidden] { display: none !important; }
 
-html { height: 100%; }
+html { height: 100%; overflow-x: clip; }
 
 body {
   margin: 0;
+  overflow-x: clip;       /* never scroll sideways, whatever overflows */
   min-height: 100%;       /* grows with its content, so short screens scroll to the bottom */
   display: flex;
   flex-direction: column;
@@ -150,8 +151,8 @@ main { flex: 1; padding: 2rem 1.5rem; }
   .about-text p:last-child { margin-bottom: 0; }
   .about-text br + br { display: block; content: ""; margin-top: 1.4em; }
 
-  /* 10% heavier shadow on the text */
-  .about-text { text-shadow: 2.2px 3.3px 4.4px rgba(0, 0, 0, 0.99); }
+  /* Text shadow 21% heavier than desktop (10% twice) */
+  .about-text { text-shadow: 2.4px 3.6px 4.8px rgba(0, 0, 0, 1); }
 
   /* Planet 10% smaller than desktop (0.8649 * 0.9) */
   .bg::after {
@@ -441,6 +442,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
   width: 100%;
   height: 100%;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);   /* image width never sizes the column */
   align-content: start;
   gap: 6px;
   overflow-y: auto;
@@ -454,6 +456,7 @@ main { flex: 1; padding: 2rem 1.5rem; }
 .paper-pages img {
   display: block;
   width: 100%;
+  max-width: 100%;
   height: auto;
   background: #fff;
 }
@@ -462,11 +465,12 @@ main { flex: 1; padding: 2rem 1.5rem; }
    (js/papers.js never fans while this query matches.) */
 @media (max-width: 700px) {
   .papers {
-    --w: min(400px, 100%);
     height: auto;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);   /* the column is exactly the page width, never the content's */
     justify-items: center;
     gap: 1.5rem;
+    min-width: 0;
     pointer-events: auto;
   }
   .paper,
@@ -474,9 +478,12 @@ main { flex: 1; padding: 2rem 1.5rem; }
     position: relative;
     top: auto;
     left: auto;
+    width: min(372px, 93%);     /* 7% smaller than the full column (400px / 100%) */
+    min-width: 0;
     transform: none;
     will-change: auto;
   }
+  .paper-screen, .paper-body { min-width: 0; }
   /* Let a swipe that reaches the end of a PDF carry on scrolling the page */
   .paper-pages { overscroll-behavior: auto; }
 }
