@@ -37,7 +37,11 @@
 
   loadPdfs();
 
+  // On narrow screens the devices are a plain column: nothing fans or zooms.
+  var stacked = window.matchMedia('(max-width: 700px)');
+
   function fan(on) {
+    if (stacked.matches) on = false;
     stage.classList.toggle('fanned', on);
     if (!on) bounds = null;
   }
@@ -50,7 +54,6 @@
 
   // On touch the first tap only fans the stack out; once fanned (or when stacked
   // in a column on narrow screens) a tap opens the PDF. Mouse hover already fans.
-  var stacked = window.matchMedia('(max-width: 700px)');
   var downFanned = false;
   var downType = 'mouse';
 
@@ -124,6 +127,9 @@
   });
 
   stage.addEventListener('focusin', function () { fan(true); });
+
+  // Crossing the breakpoint (rotating a tablet, resizing) resets any open fan.
+  stacked.addEventListener('change', function () { fan(false); });
 
   // Clicking away (or tapping away on touch) closes the fan.
   document.addEventListener('pointerdown', function (e) {
