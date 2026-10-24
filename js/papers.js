@@ -1,36 +1,91 @@
 // Research papers: fan the stacked devices out while the pointer is over them
-// (or one has keyboard focus / was tapped), and load each PDF into its screen
-// the first time they fan out. Set a card's PDF with its data-pdf attribute.
+// (or one has keyboard focus / was tapped). A card's data-pdf is the file a click
+// opens; its data-pages lists the page images shown on the screen and
+// data-page-size their pixel size.
 (function () {
   var stage = document.querySelector('.papers');
   if (!stage) return;
   var cards = Array.prototype.slice.call(stage.querySelectorAll('.paper'));
 
+  // Each screen shows the PDF's pages as pre-rendered images (data-pages), cropped to the
+  // text margins so nothing but the paper is visible. They scroll on touch and mouse alike;
+  // clicking/tapping (not scrolling) opens the original PDF in a new tab. The images are
+  // lazy, so only the first page of each loads when the tab opens (the research view is
+  // hidden until then) and the rest load as the screen scrolls.
   function loadPdfs() {
     cards.forEach(function (card) {
-      var src = card.getAttribute('data-pdf');
+      var pages = (card.getAttribute('data-pages') || '').split(' ').filter(Boolean);
+      var size = (card.getAttribute('data-page-size') || '').split('x');
       var body = card.querySelector('.paper-body');
-      if (!src || body.querySelector('iframe')) return;
-      var frame = document.createElement('iframe');
-      frame.src = src + '#toolbar=0&navpanes=0&view=FitH';
-      frame.title = card.getAttribute('aria-label');
+      if (!pages.length || body.querySelector('.paper-pages')) return;
+      var scroller = document.createElement('div');
+      scroller.className = 'paper-pages';
+      pages.forEach(function (src) {
+        var img = document.createElement('img');
+        img.src = src;
+        img.alt = '';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        if (size.length === 2) { img.width = +size[0]; img.height = +size[1]; }
+        img.draggable = false;
+        scroller.appendChild(img);
+      });
       body.textContent = '';
-      body.appendChild(frame);
+      body.appendChild(scroller);
     });
   }
 
+  loadPdfs();
+
   function fan(on) {
     stage.classList.toggle('fanned', on);
-    if (on) loadPdfs();
+    if (!on) bounds = null;
   }
 
+  // Only keyboard focus keeps the fan open. A mouse click also focuses a card, but that
+  // focus lingers after the pointer leaves (or after coming back from the PDF tab).
   function holdsFocus() {
-    return stage.contains(document.activeElement);
+    return !!stage.querySelector(':focus-visible');
   }
+
+  // On touch the first tap only fans the stack out; once fanned (or when stacked
+  // in a column on narrow screens) a tap opens the PDF. Mouse hover already fans.
+  var stacked = window.matchMedia('(max-width: 700px)');
+  var downFanned = false;
+  var downType = 'mouse';
 
   cards.forEach(function (card) {
-    card.addEventListener('pointerenter', function () { fan(true); });
+    card.addEventListener('pointerenter', function (e) {
+      if (e.pointerType === 'mouse') fan(true);
+    });
+    card.addEventListener('pointerdown', function (e) {
+      downType = e.pointerType;
+      downFanned = stage.classList.contains('fanned') || stacked.matches;
+    });
+    card.addEventListener('click', function (e) {
+      if (downType !== 'mouse' && !downFanned) return;
+      // A click on the scrollbar track/thumb is for scrolling, not opening.
+      var pages = card.querySelector('.paper-pages');
+      if (pages && e.target === pages) {
+        var box = pages.getBoundingClientRect();
+        if (e.clientX > box.left + pages.clientWidth) return;
+      }
+      openPdf(card);
+    });
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && e.target === card) openPdf(card);
+    });
   });
+
+  function openPdf(card) {
+    var src = card.getAttribute('data-pdf');
+    if (!src) return;
+    window.open(src, '_blank', 'noopener');
+    // Leave the card as it was found when the user comes back: no lingering focus,
+    // and on touch (where hover sticks after a tap) put the stack away.
+    if (document.activeElement && stage.contains(document.activeElement)) document.activeElement.blur();
+    if (downType !== 'mouse') fan(false);
+  }
 
   // Mouse only: touch pointers "leave" the moment a finger lifts.
   stage.addEventListener('pointerleave', function (e) {
@@ -39,16 +94,33 @@
 
   // While fanned the stage is a full-width band, so leaving sideways never fires
   // pointerleave. Close the fan once the mouse is a little past the outermost cards.
+  // The extent is measured once the cards settle (not on every move, which would force
+  // layout mid-animation), widened by the hover zoom so a zoomed edge card still counts.
   var SIDE_MARGIN = 32;
-  stage.addEventListener('pointermove', function (e) {
-    if (e.pointerType !== 'mouse' || !stage.classList.contains('fanned') || holdsFocus()) return;
+  var bounds = null;
+
+  function measure() {
+    if (!stage.classList.contains('fanned')) return;
+    var zoom = parseFloat(getComputedStyle(stage).getPropertyValue('--zoom')) || 1;
     var left = Infinity, right = -Infinity;
     cards.forEach(function (card) {
       var box = card.getBoundingClientRect();
-      left = Math.min(left, box.left);
-      right = Math.max(right, box.right);
+      var center = box.left + box.width / 2;
+      var half = card.offsetWidth * zoom / 2;
+      left = Math.min(left, center - half);
+      right = Math.max(right, center + half);
     });
-    if (e.clientX < left - SIDE_MARGIN || e.clientX > right + SIDE_MARGIN) fan(false);
+    bounds = { left: left, right: right };
+  }
+
+  stage.addEventListener('transitionend', function (e) {
+    if (e.propertyName === 'transform') measure();
+  });
+  window.addEventListener('resize', measure);
+
+  stage.addEventListener('pointermove', function (e) {
+    if (e.pointerType !== 'mouse' || !bounds || holdsFocus()) return;
+    if (e.clientX < bounds.left - SIDE_MARGIN || e.clientX > bounds.right + SIDE_MARGIN) fan(false);
   });
 
   stage.addEventListener('focusin', function () { fan(true); });

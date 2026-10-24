@@ -2,6 +2,7 @@
 // The space layer travels further than the planet layer. Each layer's overscan
 // margin (set in style.css) is split between cursor movement (40%) and scroll
 // movement (the rest), so neither can expose an edge or crowd out the other.
+// On touch devices, tilting the phone stands in for the cursor (see the tilt block below).
 (function () {
   var root = document.documentElement;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -13,6 +14,7 @@
   var POINTER_SHARE = 0.4;
 
   var nx = 0, ny = 0;                 // pointer position, -1..1 from window center
+  var tiltActive = false;             // once a tilt reading arrives, touch drags stop steering nx/ny
   var virtual = { x: 0, y: 0 };       // stands in for scroll when the page can't scroll
   var cur = { sx: 0, sy: 0, px: 0, py: 0 };
 
@@ -70,6 +72,7 @@
   }
 
   window.addEventListener('pointermove', function (e) {
+    if (tiltActive && e.pointerType === 'touch') return;
     nx = (e.clientX / window.innerWidth) * 2 - 1;
     ny = (e.clientY / window.innerHeight) * 2 - 1;
   }, { passive: true });
@@ -88,6 +91,59 @@
     if (touch) addVirtual(touch.x - t.clientX, touch.y - t.clientY);
     touch = { x: t.clientX, y: t.clientY };
   }, { passive: true });
+
+  // Tilt: on touch devices the phone's orientation drives nx/ny. Readings are taken
+  // relative to a baseline that settles slowly toward wherever the phone is being held,
+  // so the neutral pose is "however you're holding it" and a sustained tilt eases back.
+  // Axes follow the screen's rotation. iOS only delivers events after a permission
+  // prompt, which has to come from a tap; Android and desktop deliver them directly.
+  var TILT_RANGE = 20;                // degrees of tilt that reach the full -1..1
+  var TILT_DRIFT = 0.002;             // baseline catch-up per event (about 8s to settle)
+  var tiltBase = null;
+
+  function screenAngle() {
+    if (screen.orientation && typeof screen.orientation.angle === 'number') return screen.orientation.angle;
+    return typeof window.orientation === 'number' ? window.orientation : 0;
+  }
+
+  function onTilt(e) {
+    if (e.beta == null || e.gamma == null) return;
+    var x, y;
+    switch (((screenAngle() % 360) + 360) % 360) {
+      case 90:  x = e.beta;   y = -e.gamma; break;
+      case 180: x = -e.gamma; y = -e.beta;  break;
+      case 270: x = -e.beta;  y = e.gamma;  break;
+      default:  x = e.gamma;  y = e.beta;
+    }
+    if (!tiltBase) tiltBase = { x: x, y: y };
+    tiltBase.x += (x - tiltBase.x) * TILT_DRIFT;
+    tiltBase.y += (y - tiltBase.y) * TILT_DRIFT;
+    nx = clamp((x - tiltBase.x) / TILT_RANGE, 1);
+    ny = clamp((y - tiltBase.y) / TILT_RANGE, 1);
+    tiltActive = true;
+  }
+
+  function listenForTilt() {
+    window.addEventListener('deviceorientation', onTilt, { passive: true });
+    window.addEventListener('orientationchange', function () { tiltBase = null; });
+  }
+
+  if ('DeviceOrientationEvent' in window && window.matchMedia('(pointer: coarse)').matches) {
+    var Orientation = window.DeviceOrientationEvent;
+    if (typeof Orientation.requestPermission === 'function') {
+      var asked = false;
+      document.addEventListener('click', function ask() {
+        if (asked) return;
+        asked = true;
+        document.removeEventListener('click', ask, true);
+        Orientation.requestPermission().then(function (state) {
+          if (state === 'granted') listenForTilt();
+        }).catch(function () {});
+      }, true);
+    } else {
+      listenForTilt();
+    }
+  }
 
   requestAnimationFrame(frame);
 })();
