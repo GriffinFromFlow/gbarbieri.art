@@ -78,10 +78,12 @@
         if (e.clientX > box.left + pages.clientWidth) return;
       }
       // Touch on a tablet: the first tap only fans the stack out, the next tap zooms the
-      // card, and a tap on the zoomed card opens it. (Phones are a plain column: tap opens.)
+      // card, a tap on the zoomed card's screen opens it, and a tap on its frame zooms it back out. (Phones are a plain column: tap opens.)
       if (downType !== 'mouse' && !stacked.matches) {
         if (!downFanned) return;
         if (!card.classList.contains('zoomed')) { zoomCard(card); return; }
+        // On the zoomed card, the metal frame zooms it back out; only the screen opens the PDF.
+        if (!e.target.closest('.paper-screen')) { zoomCard(null); return; }
       }
       openPdf(card);
     });
